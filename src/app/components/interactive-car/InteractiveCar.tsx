@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { useSpring } from '@react-spring/three';
 import { PorscheModel } from './PorscheModel';
 import {
-  PORCHE_RIGHT_DOOR_ROTATIONS,
-  PORCHE_LEFT_DOOR_ROTATIONS,
-  PORCHE_HOOD_ROTATIONS,
+  PORSCHE_RIGHT_DOOR_ROTATIONS,
+  PORSCHE_LEFT_DOOR_ROTATIONS,
+  PORSCHE_HOOD_ROTATIONS,
 } from '../constants/PorcheModelConstants';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
@@ -28,20 +28,20 @@ export const InteractiveCar = (props: InteractiveCarProps) => {
 
   const { rotation: leftDoorRotation } = useSpring({
     rotation: isLeftDoorOpen
-      ? PORCHE_LEFT_DOOR_ROTATIONS.OPEN
-      : PORCHE_LEFT_DOOR_ROTATIONS.CLOSED,
+      ? PORSCHE_LEFT_DOOR_ROTATIONS.OPEN
+      : PORSCHE_LEFT_DOOR_ROTATIONS.CLOSED,
   });
 
   const { rotation: rightDoorRotation } = useSpring({
     rotation: isRightDoorOpen
-      ? PORCHE_RIGHT_DOOR_ROTATIONS.OPEN
-      : PORCHE_RIGHT_DOOR_ROTATIONS.CLOSED,
+      ? PORSCHE_RIGHT_DOOR_ROTATIONS.OPEN
+      : PORSCHE_RIGHT_DOOR_ROTATIONS.CLOSED,
   });
 
   const { rotation: hoodRotation } = useSpring({
     rotation: isHoodOpen
-      ? PORCHE_HOOD_ROTATIONS.OPEN
-      : PORCHE_HOOD_ROTATIONS.CLOSED,
+      ? PORSCHE_HOOD_ROTATIONS.OPEN
+      : PORSCHE_HOOD_ROTATIONS.CLOSED,
   });
 
   const handleLeftDoorClick = (event: ThreeEvent<MouseEvent>) => {

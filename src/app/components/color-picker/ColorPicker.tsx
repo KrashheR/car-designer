@@ -3,7 +3,7 @@
 import { useDispatch } from 'react-redux';
 import { setBodyColor } from '@/store/features/carConfigSlice';
 import { AppDispatch } from '@/store/store';
-import { PORSHE_BODY_COLORS } from '../constants/PorcheModelConstants';
+import { PORSCHE_BODY_COLORS } from '../constants/PorcheModelConstants';
 
 export function ColorPicker() {
   const dispatch = useDispatch<AppDispatch>();
@@ -13,18 +13,26 @@ export function ColorPicker() {
   };
 
   return (
-    <div className="fixed top-1/2 right-4 transform -translate-y-1/2 p-4 bg-gray-200 rounded-lg shadow-lg flex flex-col space-y-3">
-      {PORSHE_BODY_COLORS.map((color) => (
-        <button
-          key={color.name}
-          onClick={() => handleColorChange(color.hex)}
-          className="w-8 h-8 rounded-full border-2 border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-transform hover:scale-110"
-          style={{ backgroundColor: color.hex }}
-          aria-label={`Change color to ${color.name}`}
-        >
-          {color.name}
-        </button>
-      ))}
+    <div className="absolute top-1/2 right-4 transform -translate-y-2/2 p-4 bg-white rounded-lg flex flex-col space-y-3">
+      <h2 className="text-lg font-bold text-gray-700">Select Car Color</h2>
+      <ul className="flex flex-wrap gap-2 flex-col">
+        {PORSCHE_BODY_COLORS.map((color) => (
+          <li key={color.name} className="w-full">
+            <button
+              onClick={() => handleColorChange(color.hex)}
+              className="flex items-center gap-2 justify-start w-full cursor-pointer hover:bg-gray-50 rounded-lg text-gray-700"
+              aria-label={`Change color to ${color.name}`}
+            >
+              <span 
+                className="w-8 h-8 rounded-full border border-gray-300" 
+                style={{ backgroundColor: color.hex }}
+              />
+              <span className="text-md font-medium text-gray-900">{color.name}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
+
