@@ -1,11 +1,9 @@
-import { MainScene } from './components/main-scene/MainScene';
-import { ColorPicker } from './components/color-picker/ColorPicker';
+import { InteractiveViewer } from './components/viewer/InteractiveViewer';
 
 export default function Home() {
   return (
     <main className="relative w-screen h-screen overflow-hidden">
-      <MainScene />
-      <ColorPicker />
+      <InteractiveViewer />
     </main>
   );
 }

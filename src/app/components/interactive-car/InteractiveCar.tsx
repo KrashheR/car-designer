@@ -1,23 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSpring } from '@react-spring/three';
 import { PorscheModel } from './PorscheModel';
 import {
-  PORSCHE_RIGHT_DOOR_ROTATIONS,
   PORSCHE_LEFT_DOOR_ROTATIONS,
+  PORSCHE_RIGHT_DOOR_ROTATIONS,
   PORSCHE_HOOD_ROTATIONS,
+  CAMERA_LOCATIONS,
 } from '../constants/PorcheModelConstants';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { ThreeEvent } from '@react-three/fiber';
+import type { CameraLocation } from '../viewer/InteractiveViewer';
 
 interface InteractiveCarProps {
-  onLookInside: () => void;
+  onHotspotInteraction: (interactionType: string) => void;
+  cameraLocation: CameraLocation;
 }
 
-export const InteractiveCar = (props: InteractiveCarProps) => {
-  const { onLookInside } = props;
+export function InteractiveCar({
+  onHotspotInteraction,
+  cameraLocation,
+}: InteractiveCarProps) {
   const [isLeftDoorOpen, setIsLeftDoorOpen] = useState(false);
   const [isRightDoorOpen, setIsRightDoorOpen] = useState(false);
   const [isHoodOpen, setIsHoodOpen] = useState(false);
@@ -44,31 +49,39 @@ export const InteractiveCar = (props: InteractiveCarProps) => {
       : PORSCHE_HOOD_ROTATIONS.CLOSED,
   });
 
-  const handleLeftDoorClick = (event: ThreeEvent<MouseEvent>) => {
-    event.stopPropagation();
+  const toggleLeftDoor = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
     setIsLeftDoorOpen(!isLeftDoorOpen);
   };
-
-  const handleRightDoorClick = (event: ThreeEvent<MouseEvent>) => {
-    event.stopPropagation();
+  const toggleRightDoor = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
     setIsRightDoorOpen(!isRightDoorOpen);
   };
-
-  const handleHoodClick = (event: ThreeEvent<MouseEvent>) => {
-    event.stopPropagation();
+  const toggleHood = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
     setIsHoodOpen(!isHoodOpen);
   };
 
+  const showEnterHotspot =
+    isLeftDoorOpen && cameraLocation !== CAMERA_LOCATIONS.INTERIOR;
+  const showExitHotspot = cameraLocation === CAMERA_LOCATIONS.INTERIOR;
+
   return (
-    <PorscheModel
-      onLeftDoorClick={handleLeftDoorClick}
-      onRightDoorClick={handleRightDoorClick}
-      onLookInsideClick={onLookInside}
-      leftDoorRotation={leftDoorRotation}
-      rightDoorRotation={rightDoorRotation}
-      hoodRotation={hoodRotation}
-      onHoodClick={handleHoodClick}
-      bodyColor={bodyColor}
-    />
+    <group>
+      <PorscheModel
+        onLeftDoorClick={toggleLeftDoor}
+        onRightDoorClick={toggleRightDoor}
+        onHoodClick={toggleHood}
+        onHotspotInteraction={onHotspotInteraction}
+        leftDoorRotation={leftDoorRotation as any}
+        rightDoorRotation={rightDoorRotation as any}
+        hoodRotation={hoodRotation as any}
+        bodyColor={bodyColor}
+        scale={[1, 1, 1]}
+        position={[0, 0, 0]}
+        showEnterHotspot={showEnterHotspot}
+        showExitHotspot={showExitHotspot}
+      />
+    </group>
   );
-};
+}

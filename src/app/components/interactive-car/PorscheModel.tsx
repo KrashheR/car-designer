@@ -1,269 +1,278 @@
-import * as THREE from 'three';
-import React, { useRef, useMemo } from 'react';
-import { useGLTF } from '@react-three/drei';
+import { Mesh, Color, MeshPhysicalMaterial, MeshStandardMaterial } from 'three';
+import React, { useMemo } from 'react';
+import { useGLTF, Billboard, Image } from '@react-three/drei';
 import { GLTF } from 'three-stdlib';
 import { animated, SpringValue } from '@react-spring/three';
 import { ThreeEvent } from '@react-three/fiber';
+import { PORSCHE_INTERACTION_TYPES } from '../constants/PorcheModelConstants';
 
 type GLTFResult = GLTF & {
   nodes: {
-    b_1car_911992Carrera4SFrontBumper00_vstd_RES0RES0004Front: THREE.Mesh;
-    b_2car_911992Carrera4SBody00_vlgt_RES0RES0Body_00_RES0_Bun: THREE.Mesh;
-    b_3car_911992Carrera4SCalipers00_FrontLeft_Stator_vwhl_RES: THREE.Mesh;
-    b_3RES0001Calipers_00_RES0_Bundlecar_911992Carrera4SCalip002: THREE.Mesh;
-    b_3RES0001Calipers_00_RES0_Bundlecar_911992Carrera4SCalip004: THREE.Mesh;
-    b_3RES0001Calipers_00_RES0_Bundlecar_911992Carrera4SCalip: THREE.Mesh;
-    car_911992Carrera4SBody00_vgla_RES0_car_vgla_911992Carrera4S_0: THREE.Mesh;
-    car_911992Carrera4SBody00_vstd2_RES0_standardSurface1_0: THREE.Mesh;
-    car_911992Carrera4SBody00_vstd_RES0_car_vstd_911992Carrera4S_0: THREE.Mesh;
-    car_911992Carrera4SEngine00_vpnt_RES0_car_vpnt_911992Carrera4S_: THREE.Mesh;
-    car_911992Carrera4SEngine00_vstd2_RES0_car_vstd_911992Carrera4S: THREE.Mesh;
-    car_911992Carrera4SEngine00_vstd_RES0_car_vstd_911992Carrera4SE: THREE.Mesh;
-    car_911992Carrera4SEngine00_vstda_RES0_car_vstda_911992Carrera4: THREE.Mesh;
-    car_911992Carrera4SFrontBumper00_vlgt_RES0_car_vlgt_911992Carre: THREE.Mesh;
-    car_911992Carrera4SFrontBumper00_vpnt_RES0_car_vpnt_911992Carre: THREE.Mesh;
-    car_911992Carrera4SFrontBumper00_vstd2_RES0_standardSurface1_0: THREE.Mesh;
-    car_911992Carrera4SFrontHood00_vstd_RES0_car_vstd_911992Carrera: THREE.Mesh;
-    car_911992Carrera4SFrontHood00_vstd_RES0_car_vstd_911992Carrera_1: THREE.Mesh;
-    car_911992Carrera4SInteriorStatic00_vpnt_RES0_car_vpnt_911992Ca: THREE.Mesh;
-    car_911992Carrera4SRearBumper00_vlgt_RES0_car_vlgt_911992Carrer: THREE.Mesh;
-    car_911992Carrera4SRearBumper00_vpnt_RES0_car_vpnt_911992Carrer: THREE.Mesh;
-    car_911992Carrera4SRearBumper00_vstd_RES0_standardSurface1_0: THREE.Mesh;
-    car_911992Carrera4SRearHood00_vgla_RES0_car_vgla_911992Carrera4: THREE.Mesh;
-    car_911992Carrera4SRearHood00_vlgt_RES0_car_vlgt_911992Carrera4: THREE.Mesh;
-    car_911992Carrera4SRearHood00_vpnt_RES0_car_vpnt_911992Carrera4: THREE.Mesh;
-    car_911992Carrera4SRoof00_vpnt_RES0_car_vpnt_911992Carrera4S_0: THREE.Mesh;
-    car_911992Carrera4SSideSkirtStatic00_vgla_RES0_car_vgla_911992C: THREE.Mesh;
-    car_911992Carrera4SSideSkirtStatic00_vpnt_RES0_car_vpnt_911992C_1: THREE.Mesh;
-    car_911992Carrera4SSideSkirtStatic00_vpnt_RES0_car_vpnt_911992C_2: THREE.Mesh;
-    car_911992Carrera4SSideSkirtStatic00_vstd_RES0_car_vstd_911992C: THREE.Mesh;
-    car_911992Carrera4SWing00_vlgt_RES0_car_vlgt_911992Carrera4S_0: THREE.Mesh;
-    car_911992Carrera4SWing00_vpnt_RES0_car_vpnt_911992Carrera4S_0: THREE.Mesh;
-    car_911992Carrera4SWing00_vstd_RES0_car_vstd_911992Carrera4S_0: THREE.Mesh;
-    interiorcar_911992Carrera4SInteriorStatic00_vstd2_RES0Inte: THREE.Mesh;
-    interiorInterior_StaticRES0006Interior_00_RES0_Bundlegrou: THREE.Mesh;
-    interiorRES0006Interior_00_RES0_Bundlegroup1car_911992Carrera: THREE.Mesh;
-    interiorRES0006Interior_00_RES0_Bundlegroup1car_911992Carrera_1: THREE.Mesh;
-    interiorRES0006Interior_00_RES0_Bundlegroup1car_911992Carrera_2: THREE.Mesh;
-    interiorRES0006Interior_00_RES0_Bundlegroup1car_911992Carrera_3: THREE.Mesh;
-    rearcar_911992Carrera4SRearBumper00_vstd2_RES0RES0008Rear: THREE.Mesh;
-    reargroup1car_911992Carrera4SRearBumper00ExhaustOutA00_vst: THREE.Mesh;
-    reargroup1car_911992Carrera4SRearHood00_vstd_RES0RES0010R: THREE.Mesh;
-    interiorRES0006Interior_00_RES0_Bundlegroup1Interior_DoorRcar: THREE.Mesh;
-    interiorRES0006Interior_00_RES0_Bundlegroup1Interior_DoorRcar_1: THREE.Mesh;
-    interiorRES0006Interior_00_RES0_Bundlegroup1Interior_DoorRcar_2: THREE.Mesh;
-    interiorRES0006Interior_00_RES0_Bundlegroup1Interior_DoorRcar_3: THREE.Mesh;
-    RIMcar_911992Carrera4SRims00_FrontLeft_Rotor_vwhl_RES0RES0001: THREE.Mesh;
-    RIMRES0012Rims_00_RES0_Bundlecar_911992Carrera4SRims00_Fr: THREE.Mesh;
-    RIMRES0012Rims_00_RES0_Bundlecar_911992Carrera4SRims00_Re: THREE.Mesh;
-    RIMRES0012Rims_00_RES0_Bundlecar_911992Carrera4SRims00_Re001: THREE.Mesh;
-    polySurface10_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: THREE.Mesh;
-    polySurface103_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface104_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface105_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface106_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface107_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface108_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface109_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface11_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: THREE.Mesh;
-    polySurface110_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface111_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface112_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface113_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface114_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface115_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface116_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface117_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface118_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface119_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface12_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: THREE.Mesh;
-    polySurface120_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface121_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface122_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface123_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface124_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface125_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface126_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface127_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface128_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface13_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: THREE.Mesh;
-    polySurface134_BL_RIM_0: THREE.Mesh;
-    polySurface135_BL_RIM_0: THREE.Mesh;
-    polySurface137_BL_RIM_0: THREE.Mesh;
-    polySurface14_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: THREE.Mesh;
-    polySurface144_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface145_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface146_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface147_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface148_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface149_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface15_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: THREE.Mesh;
-    polySurface150_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface151_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface152_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface153_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface154_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface155_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface16_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: THREE.Mesh;
-    polySurface242_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface243_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface244_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface245_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface246_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface247_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface248_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface249_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface250_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface251_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface252_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface253_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface254_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface255_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface256_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface257_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface258_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface259_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface260_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface261_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface262_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface263_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface264_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface265_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface266_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface267_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface283_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface284_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface285_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface286_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface287_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface288_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface289_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface290_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface291_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface292_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface293_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface294_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface387_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface388_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface389_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface390_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface391_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface392_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface393_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface394_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface395_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface396_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface397_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface398_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface399_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface400_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface401_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface402_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface403_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface404_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface405_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface406_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface407_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface408_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface409_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface410_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface411_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface412_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface428_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface429_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface430_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface431_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface432_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface433_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface434_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface435_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface436_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface437_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface438_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface439_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface5_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_3: THREE.Mesh;
-    polySurface532_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface533_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface534_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface535_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface536_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface537_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface538_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface539_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface540_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface541_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface542_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface543_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface544_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface545_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface546_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface547_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface548_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface549_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface550_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface551_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface552_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface553_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface554_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface555_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface556_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface557_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: THREE.Mesh;
-    polySurface6_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_3: THREE.Mesh;
-    polySurface7_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_3: THREE.Mesh;
-    polySurface8_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_3: THREE.Mesh;
-    polySurface9_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_3: THREE.Mesh;
+    b_1car_911992Carrera4SFrontBumper00_vstd_RES0RES0004Front: Mesh;
+    b_2car_911992Carrera4SBody00_vlgt_RES0RES0Body_00_RES0_Bun: Mesh;
+    b_3car_911992Carrera4SCalipers00_FrontLeft_Stator_vwhl_RES: Mesh;
+    b_3RES0001Calipers_00_RES0_Bundlecar_911992Carrera4SCalip002: Mesh;
+    b_3RES0001Calipers_00_RES0_Bundlecar_911992Carrera4SCalip004: Mesh;
+    b_3RES0001Calipers_00_RES0_Bundlecar_911992Carrera4SCalip: Mesh;
+    car_911992Carrera4SBody00_vgla_RES0_car_vgla_911992Carrera4S_0: Mesh;
+    car_911992Carrera4SBody00_vstd2_RES0_standardSurface1_0: Mesh;
+    car_911992Carrera4SBody00_vstd_RES0_car_vstd_911992Carrera4S_0: Mesh;
+    car_911992Carrera4SEngine00_vpnt_RES0_car_vpnt_911992Carrera4S_: Mesh;
+    car_911992Carrera4SEngine00_vstd2_RES0_car_vstd_911992Carrera4S: Mesh;
+    car_911992Carrera4SEngine00_vstd_RES0_car_vstd_911992Carrera4SE: Mesh;
+    car_911992Carrera4SEngine00_vstda_RES0_car_vstda_911992Carrera4: Mesh;
+    car_911992Carrera4SFrontBumper00_vlgt_RES0_car_vlgt_911992Carre: Mesh;
+    car_911992Carrera4SFrontBumper00_vpnt_RES0_car_vpnt_911992Carre: Mesh;
+    car_911992Carrera4SFrontBumper00_vstd2_RES0_standardSurface1_0: Mesh;
+    car_911992Carrera4SFrontHood00_vstd_RES0_car_vstd_911992Carrera: Mesh;
+    car_911992Carrera4SFrontHood00_vstd_RES0_car_vstd_911992Carrera_1: Mesh;
+    car_911992Carrera4SInteriorStatic00_vpnt_RES0_car_vpnt_911992Ca: Mesh;
+    car_911992Carrera4SRearBumper00_vlgt_RES0_car_vlgt_911992Carrer: Mesh;
+    car_911992Carrera4SRearBumper00_vpnt_RES0_car_vpnt_911992Carrer: Mesh;
+    car_911992Carrera4SRearBumper00_vstd_RES0_standardSurface1_0: Mesh;
+    car_911992Carrera4SRearHood00_vgla_RES0_car_vgla_911992Carrera4: Mesh;
+    car_911992Carrera4SRearHood00_vlgt_RES0_car_vlgt_911992Carrera4: Mesh;
+    car_911992Carrera4SRearHood00_vpnt_RES0_car_vpnt_911992Carrera4: Mesh;
+    car_911992Carrera4SRoof00_vpnt_RES0_car_vpnt_911992Carrera4S_0: Mesh;
+    car_911992Carrera4SSideSkirtStatic00_vgla_RES0_car_vgla_911992C: Mesh;
+    car_911992Carrera4SSideSkirtStatic00_vpnt_RES0_car_vpnt_911992C_1: Mesh;
+    car_911992Carrera4SSideSkirtStatic00_vpnt_RES0_car_vpnt_911992C_2: Mesh;
+    car_911992Carrera4SSideSkirtStatic00_vstd_RES0_car_vstd_911992C: Mesh;
+    car_911992Carrera4SWing00_vlgt_RES0_car_vlgt_911992Carrera4S_0: Mesh;
+    car_911992Carrera4SWing00_vpnt_RES0_car_vpnt_911992Carrera4S_0: Mesh;
+    car_911992Carrera4SWing00_vstd_RES0_car_vstd_911992Carrera4S_0: Mesh;
+    interiorcar_911992Carrera4SInteriorStatic00_vstd2_RES0Inte: Mesh;
+    interiorInterior_StaticRES0006Interior_00_RES0_Bundlegrou: Mesh;
+    interiorRES0006Interior_00_RES0_Bundlegroup1car_911992Carrera: Mesh;
+    interiorRES0006Interior_00_RES0_Bundlegroup1car_911992Carrera_1: Mesh;
+    interiorRES0006Interior_00_RES0_Bundlegroup1car_911992Carrera_2: Mesh;
+    interiorRES0006Interior_00_RES0_Bundlegroup1car_911992Carrera_3: Mesh;
+    rearcar_911992Carrera4SRearBumper00_vstd2_RES0RES0008Rear: Mesh;
+    reargroup1car_911992Carrera4SRearBumper00ExhaustOutA00_vst: Mesh;
+    reargroup1car_911992Carrera4SRearHood00_vstd_RES0RES0010R: Mesh;
+    interiorRES0006Interior_00_RES0_Bundlegroup1Interior_DoorRcar: Mesh;
+    interiorRES0006Interior_00_RES0_Bundlegroup1Interior_DoorRcar_1: Mesh;
+    interiorRES0006Interior_00_RES0_Bundlegroup1Interior_DoorRcar_2: Mesh;
+    interiorRES0006Interior_00_RES0_Bundlegroup1Interior_DoorRcar_3: Mesh;
+    RIMcar_911992Carrera4SRims00_FrontLeft_Rotor_vwhl_RES0RES0001: Mesh;
+    RIMRES0012Rims_00_RES0_Bundlecar_911992Carrera4SRims00_Fr: Mesh;
+    RIMRES0012Rims_00_RES0_Bundlecar_911992Carrera4SRims00_Re: Mesh;
+    RIMRES0012Rims_00_RES0_Bundlecar_911992Carrera4SRims00_Re001: Mesh;
+    polySurface10_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: Mesh;
+    polySurface103_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface104_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface105_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface106_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface107_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface108_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface109_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface11_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: Mesh;
+    polySurface110_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface111_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface112_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface113_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface114_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface115_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface116_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface117_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface118_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface119_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface12_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: Mesh;
+    polySurface120_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface121_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface122_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface123_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface124_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface125_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface126_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface127_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface128_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface13_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: Mesh;
+    polySurface134_BL_RIM_0: Mesh;
+    polySurface135_BL_RIM_0: Mesh;
+    polySurface137_BL_RIM_0: Mesh;
+    polySurface14_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: Mesh;
+    polySurface144_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface145_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface146_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface147_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface148_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface149_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface15_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: Mesh;
+    polySurface150_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface151_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface152_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface153_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface154_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface155_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface16_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_: Mesh;
+    polySurface242_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface243_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface244_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface245_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface246_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface247_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface248_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface249_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface250_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface251_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface252_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface253_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface254_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface255_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface256_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface257_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface258_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface259_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface260_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface261_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface262_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface263_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface264_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface265_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface266_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface267_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface283_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface284_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface285_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface286_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface287_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface288_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface289_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface290_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface291_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface292_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface293_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface294_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface387_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface388_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface389_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface390_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface391_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface392_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface393_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface394_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface395_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface396_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface397_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface398_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface399_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface400_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface401_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface402_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface403_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface404_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface405_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface406_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface407_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface408_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface409_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface410_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface411_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface412_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface428_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface429_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface430_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface431_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface432_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface433_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface434_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface435_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface436_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface437_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface438_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface439_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface5_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_3: Mesh;
+    polySurface532_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface533_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface534_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface535_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface536_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface537_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface538_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface539_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface540_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface541_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface542_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface543_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface544_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface545_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface546_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface547_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface548_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface549_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface550_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface551_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface552_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface553_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface554_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface555_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface556_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface557_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D: Mesh;
+    polySurface6_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_3: Mesh;
+    polySurface7_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_3: Mesh;
+    polySurface8_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_3: Mesh;
+    polySurface9_Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_3: Mesh;
   };
   materials: {
-    ['car_vstd_911992Carrera4S.001']: THREE.MeshPhysicalMaterial;
-    ['car_vlgt_911992Carrera4S.001']: THREE.MeshPhysicalMaterial;
-    CALIP_COLOR: THREE.MeshStandardMaterial;
-    car_vgla_911992Carrera4S: THREE.MeshPhysicalMaterial;
-    standardSurface1: THREE.MeshPhysicalMaterial;
-    car_vstd_911992Carrera4S: THREE.MeshPhysicalMaterial;
-    car_vpnt_911992Carrera4S: THREE.MeshPhysicalMaterial;
-    car_vstd_911992Carrera4SEngine: THREE.MeshPhysicalMaterial;
-    car_vstda_911992Carrera4SGrid01: THREE.MeshStandardMaterial;
-    car_vlgt_911992Carrera4S: THREE.MeshPhysicalMaterial;
-    car_vstd_911992Carrera4SInterior: THREE.MeshPhysicalMaterial;
-    ['car_vstd_911992Carrera4SInterior.001']: THREE.MeshPhysicalMaterial;
-    ['car_vstd_911992Carrera4S.002']: THREE.MeshPhysicalMaterial;
-    car_vwhl_911992Carrera4SRims: THREE.MeshPhysicalMaterial;
-    Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_3DWheel1B_Mate: THREE.MeshPhysicalMaterial;
-    BL_RIM: THREE.MeshStandardMaterial;
+    ['car_vstd_911992Carrera4S.001']: MeshPhysicalMaterial;
+    ['car_vlgt_911992Carrera4S.001']: MeshPhysicalMaterial;
+    CALIP_COLOR: MeshStandardMaterial;
+    car_vgla_911992Carrera4S: MeshPhysicalMaterial;
+    standardSurface1: MeshPhysicalMaterial;
+    car_vstd_911992Carrera4S: MeshPhysicalMaterial;
+    car_vpnt_911992Carrera4S: MeshPhysicalMaterial;
+    car_vstd_911992Carrera4SEngine: MeshPhysicalMaterial;
+    car_vstda_911992Carrera4SGrid01: MeshStandardMaterial;
+    car_vlgt_911992Carrera4S: MeshPhysicalMaterial;
+    car_vstd_911992Carrera4SInterior: MeshPhysicalMaterial;
+    ['car_vstd_911992Carrera4SInterior.001']: MeshPhysicalMaterial;
+    ['car_vstd_911992Carrera4S.002']: MeshPhysicalMaterial;
+    car_vwhl_911992Carrera4SRims: MeshPhysicalMaterial;
+    Porsche_911Targa4SRewardRecycled_2021_Wheel1A_3D_3DWheel1B_Mate: MeshPhysicalMaterial;
+    BL_RIM: MeshStandardMaterial;
   };
 };
+
+interface GLTFResultExt extends GLTFResult {
+  nodes: GLTFResult['nodes'];
+  materials: GLTFResult['materials'];
+}
 
 interface CarModelProps
   extends Omit<React.ComponentProps<'group'>, 'rotation'> {
   onLeftDoorClick: (event: ThreeEvent<MouseEvent>) => void;
   onRightDoorClick: (event: ThreeEvent<MouseEvent>) => void;
   onHoodClick: (event: ThreeEvent<MouseEvent>) => void;
-  onLookInsideClick: () => void;
+  onHotspotInteraction: (interactionType: string) => void;
   leftDoorRotation: SpringValue<number[]>;
   rightDoorRotation: SpringValue<number[]>;
   hoodRotation: SpringValue<number[]>;
   bodyColor: string;
+  showEnterHotspot: boolean;
+  showExitHotspot: boolean;
 }
 
 export function PorscheModel(props: CarModelProps) {
   const { nodes, materials } = useGLTF(
     '/models/porsche_carrera4s.glb'
-  ) as GLTFResult;
+  ) as GLTFResultExt;
   const {
     onLeftDoorClick,
     onRightDoorClick,
-    onLookInsideClick,
+    onHotspotInteraction,
     leftDoorRotation,
     rightDoorRotation,
     hoodRotation,
     onHoodClick,
     bodyColor,
-    ...groupProps
+    showEnterHotspot,
+    showExitHotspot,
   } = props;
 
   const paintMaterial = useMemo(() => {
     const mat = materials.car_vpnt_911992Carrera4S.clone();
-    mat.color = new THREE.Color(bodyColor);
+    mat.color = new Color(bodyColor);
     return mat;
   }, [materials.car_vpnt_911992Carrera4S, bodyColor]);
 
@@ -273,22 +282,32 @@ export function PorscheModel(props: CarModelProps) {
         <group name="Sketchfab_model" rotation={[-Math.PI / 2, 0, 0]}>
           <group name="FINAL_MODELfbx" rotation={[Math.PI / 2, 0, 0]} scale={1}>
             <group name="RootNode">
-              <mesh
-                position={[0.95, 0.7, -0.41]}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onLookInsideClick();
-                }}
-                onPointerOver={() => (document.body.style.cursor = 'pointer')}
-                onPointerOut={() => (document.body.style.cursor = 'auto')}
-              >
-                <sphereGeometry args={[0.08, 16, 16]} />
-                <meshStandardMaterial
-                  color="white"
-                  opacity={0.55}
-                  transparent
-                />
-              </mesh>
+              {showEnterHotspot && (
+                <Billboard
+                  position={[0.95, 0.7, -0.1]}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onHotspotInteraction(
+                      PORSCHE_INTERACTION_TYPES.ENTER_INTERIOR
+                    );
+                  }}
+                >
+                  <Image url="/images/enter.svg" scale={0.18} transparent />
+                </Billboard>
+              )}
+              {showExitHotspot && (
+                <Billboard
+                  position={[0.59, 0.89, 0.2]}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onHotspotInteraction(
+                      PORSCHE_INTERACTION_TYPES.EXIT_INTERIOR
+                    );
+                  }}
+                >
+                  <Image url="/images/exit.svg" scale={0.05} transparent />
+                </Billboard>
+              )}
               <group name="b_1car_911992Carrera4SFrontBumper00_vstd_RES0RES0004FrontBump">
                 <mesh
                   name="b_1car_911992Carrera4SFrontBumper00_vstd_RES0RES0004Front"
@@ -546,7 +565,7 @@ export function PorscheModel(props: CarModelProps) {
                       <animated.group
                         name="hood"
                         position={[0, 0.224, -0.19]}
-                        rotation={hoodRotation as any} // Приведение к any
+                        rotation={hoodRotation as any}
                         onClick={onHoodClick}
                       >
                         <mesh
@@ -906,7 +925,7 @@ export function PorscheModel(props: CarModelProps) {
                   name="interiorRES0006Interior_00_RES0_Bundlegroup1car_911992Car"
                   position={[0.786, 0.688, 0.631]}
                   onClick={onLeftDoorClick}
-                  rotation={leftDoorRotation as any} // Приведение к any
+                  rotation={leftDoorRotation as any}
                 >
                   <mesh
                     name="interiorRES0006Interior_00_RES0_Bundlegroup1car_911992Carrera"
@@ -1000,7 +1019,7 @@ export function PorscheModel(props: CarModelProps) {
                   name="interiorRES0006Interior_00_RES0_Bundlegroup1Interior_Door001"
                   position={[-0.785, 0.688, 0.63]}
                   onClick={onRightDoorClick}
-                  rotation={rightDoorRotation as any} // Приведение к any
+                  rotation={rightDoorRotation as any}
                 >
                   <mesh
                     name="interiorRES0006Interior_00_RES0_Bundlegroup1Interior_DoorRcar"
