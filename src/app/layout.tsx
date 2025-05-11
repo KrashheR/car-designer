@@ -22,18 +22,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} antialiased`}>
-        <header className="row-start-1 flex justify-center items-center flex-col py-4 bg-white">
-          <h1 className="text-4xl font-bold text-gray-700 border-b-2 border-gray-700">
-            CAR DESIGNER
-          </h1>
-          <Navigation />
-        </header>
-        <main className="flex flex-col gap-[0px] row-start-2 items-center sm:items-start">
-          <Providers>{children}</Providers>
-        </main>
-        <footer className="row-start-3 flex items-center justify-center">
-          <p className="text-sm text-gray-500">&copy; 2025 Car Designer.</p>
-        </footer>
+        <Providers>
+          <header className="row-start-1 flex justify-center items-center flex-col py-4 bg-white">
+            <h1 className="text-4xl font-bold text-gray-700 border-b-2 border-gray-700">
+              CAR DESIGNER
+            </h1>
+            <Navigation />
+          </header>
+          <main className="flex flex-col gap-[0px] row-start-2 items-center sm:items-start">
+            {children}
+          </main>
+          <footer className="row-start-3 flex items-center justify-center">
+            <p className="text-sm text-gray-500">&copy; 2025 Car Designer.</p>
+          </footer>
+        </Providers>
       </body>
     </html>
   );

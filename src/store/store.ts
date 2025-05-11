@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import carConfigReducer from './features/carConfigSlice';
+import carConfigReducer from './features/carConfig/carConfigSlice';
+import cameraReducer from './features/camera/cameraSlice';
 
 export const store = configureStore({
   reducer: {
     carConfig: carConfigReducer,
+    camera: cameraReducer,
   },
 });
 

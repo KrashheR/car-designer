@@ -1,34 +1,45 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { ThreeCanvasScene } from './ThreeCanvasScene';
-import { CAMERA_LOCATIONS } from '../constants/PorcheModelConstants';
+import {
+  CAMERA_LOCATIONS,
+  PORSCHE_INTERACTION_TYPES,
+} from '../constants/PorcheModelConstants';
 import { ColorPicker } from '../color-picker/ColorPicker';
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState, AppDispatch } from '@/store/store';
+import {
+  setTargetCameraLocation,
+  setTargetIsCanvasActive,
+} from '@/store/features/camera/cameraSlice';
+import { selectIsCanvasActive } from '@/store/features/camera/cameraSelectors';
 
 export type CameraLocation =
   (typeof CAMERA_LOCATIONS)[keyof typeof CAMERA_LOCATIONS];
 
+export type CameraInteractionType =
+  (typeof PORSCHE_INTERACTION_TYPES)[keyof typeof PORSCHE_INTERACTION_TYPES];
+
 export function InteractiveViewer() {
   const [isInteracting, setIsInteracting] = useState(false);
-  const [isCanvasActive, setIsCanvasActive] = useState(false);
+  const isCanvasActive = useSelector(selectIsCanvasActive);
   const [isHovered, setIsHovered] = useState(false);
-  const [cameraLocation, setCameraLocation] = useState<CameraLocation>(
-    CAMERA_LOCATIONS.EXTERIOR
-  );
+
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleContainerClick = () => {
     if (!isCanvasActive) {
-      setIsCanvasActive(true);
+      dispatch(setTargetIsCanvasActive(true));
       setIsHovered(false);
     }
   };
 
   const handleCloseClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsCanvasActive(false);
+    dispatch(setTargetIsCanvasActive(false));
     setIsInteracting(false);
-    setCameraLocation(CAMERA_LOCATIONS.EXTERIOR);
   };
 
   const handlePointerEnter = () => {
@@ -38,13 +49,7 @@ export function InteractiveViewer() {
   };
 
   const handlePointerLeave = () => {
-    if (!isCanvasActive) {
-      setIsHovered(false);
-    }
-  };
-
-  const handleCameraLocationChange = (newLocation: CameraLocation) => {
-    setCameraLocation(newLocation);
+    setIsHovered(false);
   };
 
   return (
@@ -89,8 +94,6 @@ export function InteractiveViewer() {
             isCanvasActive={isCanvasActive}
             isInteracting={isInteracting}
             setIsInteracting={setIsInteracting}
-            onCameraLocationChange={handleCameraLocationChange}
-            cameraLocation={cameraLocation}
           />
         </Suspense>
       </Canvas>

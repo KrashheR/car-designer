@@ -124,6 +124,11 @@ export function ThreeCanvasScene({
     };
   }, [camera, cameraLocation, onCameraLocationChange, controlsRef.current]);
 
+  useEffect(() => {
+    console.log('EFFECTcameraLocation', cameraLocation);
+    animateCameraToView(cameraLocation);
+  }, [cameraLocation]);
+
   return (
     <group>
       <Environment

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useSpring } from '@react-spring/three';
 import { PorscheModel } from './PorscheModel';
 import {
@@ -9,10 +9,21 @@ import {
   PORSCHE_HOOD_ROTATIONS,
   CAMERA_LOCATIONS,
 } from '../constants/PorcheModelConstants';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/store/store';
 import { ThreeEvent } from '@react-three/fiber';
 import type { CameraLocation } from '../viewer/InteractiveViewer';
+import {
+  setTrunkOpen,
+  setLeftDoorOpen,
+  setRightDoorOpen,
+} from '@/store/features/carConfig/carConfigSlice';
+import {
+  selectIsLeftDoorOpen,
+  selectIsRightDoorOpen,
+  selectIsTrunkOpen,
+  selectBodyColor,
+} from '@/store/features/carConfig/carConfigSelectors';
 
 interface InteractiveCarProps {
   onHotspotInteraction: (interactionType: string) => void;
@@ -23,13 +34,11 @@ export function InteractiveCar({
   onHotspotInteraction,
   cameraLocation,
 }: InteractiveCarProps) {
-  const [isLeftDoorOpen, setIsLeftDoorOpen] = useState(false);
-  const [isRightDoorOpen, setIsRightDoorOpen] = useState(false);
-  const [isHoodOpen, setIsHoodOpen] = useState(false);
-
-  const bodyColor = useSelector(
-    (state: RootState) => state.carConfig.bodyColor
-  );
+  const dispatch = useDispatch<AppDispatch>();
+  const isLeftDoorOpen = useSelector(selectIsLeftDoorOpen);
+  const isRightDoorOpen = useSelector(selectIsRightDoorOpen);
+  const isTrunkOpen = useSelector(selectIsTrunkOpen);
+  const bodyColor = useSelector(selectBodyColor);
 
   const { rotation: leftDoorRotation } = useSpring({
     rotation: isLeftDoorOpen
@@ -44,22 +53,22 @@ export function InteractiveCar({
   });
 
   const { rotation: hoodRotation } = useSpring({
-    rotation: isHoodOpen
+    rotation: isTrunkOpen
       ? PORSCHE_HOOD_ROTATIONS.OPEN
       : PORSCHE_HOOD_ROTATIONS.CLOSED,
   });
 
   const toggleLeftDoor = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
-    setIsLeftDoorOpen(!isLeftDoorOpen);
+    dispatch(setLeftDoorOpen(!isLeftDoorOpen));
   };
   const toggleRightDoor = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
-    setIsRightDoorOpen(!isRightDoorOpen);
+    dispatch(setRightDoorOpen(!isRightDoorOpen));
   };
   const toggleHood = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
-    setIsHoodOpen(!isHoodOpen);
+    dispatch(setTrunkOpen(!isTrunkOpen));
   };
 
   const showEnterHotspot =

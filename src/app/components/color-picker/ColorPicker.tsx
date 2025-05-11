@@ -1,7 +1,7 @@
 'use client';
 
 import { useDispatch } from 'react-redux';
-import { setBodyColor } from '@/store/features/carConfigSlice';
+import { setBodyColor } from '@/store/features/carConfig/carConfigSlice';
 import { AppDispatch } from '@/store/store';
 import { PORSCHE_BODY_COLORS } from '../constants/PorcheModelConstants';
 
@@ -23,11 +23,13 @@ export function ColorPicker() {
               className="flex items-center gap-2 justify-start w-full cursor-pointer hover:bg-gray-50 rounded-lg text-gray-700"
               aria-label={`Change color to ${color.name}`}
             >
-              <span 
-                className="w-8 h-8 rounded-full border border-gray-300" 
+              <span
+                className="w-8 h-8 rounded-full border border-gray-300"
                 style={{ backgroundColor: color.hex }}
               />
-              <span className="text-md font-medium text-gray-900">{color.name}</span>
+              <span className="text-md font-medium text-gray-900">
+                {color.name}
+              </span>
             </button>
           </li>
         ))}
@@ -35,4 +37,3 @@ export function ColorPicker() {
     </div>
   );
 }
-
